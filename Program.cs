@@ -12,8 +12,16 @@ namespace FFXIVItemStringExportTool
 {
     class Program
     {
-        private static Dictionary<int, Dictionary<string, string>> _itemDatabase = new Dictionary<int,
+        private static readonly Dictionary<int, Dictionary<string, string>> ItemDatabase = new Dictionary<int,
             Dictionary<string, string>>();
+
+        static string CleanupName(string name)
+        {
+            name = name.Replace("<Indent/>", "");
+            name = name.Replace("<SoftHyphen/>", "");
+            return name;
+        }
+
         static void ExportItemString(string gameDirectory, Language lang, string shortName)
         {
             var realm = new SaintCoinach.ARealmReversed(gameDirectory, lang);
@@ -21,12 +29,12 @@ namespace FFXIVItemStringExportTool
 
             foreach (var item in items)
             {
-                if (!_itemDatabase.ContainsKey(item.Key))
+                if (!ItemDatabase.ContainsKey(item.Key))
                 {
-                    _itemDatabase.Add(item.Key, new Dictionary<string, string>());
+                    ItemDatabase.Add(item.Key, new Dictionary<string, string>());
                 }
 
-                _itemDatabase[item.Key].Add(shortName, item.Name);
+                ItemDatabase[item.Key].Add(shortName, CleanupName(item.Name.ToString()));
             }
         }
 
@@ -42,7 +50,7 @@ namespace FFXIVItemStringExportTool
             ExportItemString(globalGameDirectory, Language.German, "de");
             ExportItemString(chineseGameDirectory, Language.ChineseSimplified, "cn");
 
-            var jsonString = JsonConvert.SerializeObject(_itemDatabase);
+            var jsonString = JsonConvert.SerializeObject(ItemDatabase);
 
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(outputDirectory, "ItemStrings.json")))
             {
