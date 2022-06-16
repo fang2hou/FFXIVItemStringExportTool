@@ -10,19 +10,19 @@ using Newtonsoft.Json;
 
 namespace FFXIVItemStringExportTool
 {
-    class Program
+    internal class Program
     {
         private static readonly Dictionary<int, Dictionary<string, string>> ItemDatabase = new Dictionary<int,
             Dictionary<string, string>>();
 
-        static string CleanupName(string name)
+        private static string CleanupName(string name)
         {
             name = name.Replace("<Indent/>", "");
             name = name.Replace("<SoftHyphen/>", "");
             return name;
         }
 
-        static void ExportItemString(string gameDirectory, Language lang, string shortName)
+        private static void ExportItemString(string gameDirectory, Language lang, string shortName)
         {
             var realm = new SaintCoinach.ARealmReversed(gameDirectory, lang);
             var items = realm.GameData.GetSheet<SaintCoinach.Xiv.Item>();
@@ -38,7 +38,7 @@ namespace FFXIVItemStringExportTool
             }
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             const string outputDirectory = @"C:\Users\fang2hou\Desktop";
             const string globalGameDirectory = @"C:\Games\Square Enix\FFXIV GL";
@@ -55,7 +55,7 @@ namespace FFXIVItemStringExportTool
 
             var jsonString = JsonConvert.SerializeObject(cleanedDb);
 
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(outputDirectory, "ItemStrings.json")))
+            using (var outputFile = new StreamWriter(Path.Combine(outputDirectory, "ItemStrings.json")))
             {
                 outputFile.WriteLine(jsonString);
             }
