@@ -50,17 +50,10 @@ namespace FFXIVItemStringExportTool
             ExportItemString(globalGameDirectory, Language.German, "de");
             ExportItemString(chineseGameDirectory, Language.ChineseSimplified, "cn");
 
-            var cleanedDB = new Dictionary<int, Dictionary<string, string>>();
+            var cleanedDb = ItemDatabase.Where(kvp => kvp.Value["ja"] != "")
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            foreach (KeyValuePair<int, Dictionary<string, string>> kvp in ItemDatabase)
-            {
-                if (kvp.Value["ja"] != "")
-                {
-                    cleanedDB.Add(kvp.Key, kvp.Value);
-                }
-            }
-
-            var jsonString = JsonConvert.SerializeObject(cleanedDB);
+            var jsonString = JsonConvert.SerializeObject(cleanedDb);
 
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(outputDirectory, "ItemStrings.json")))
             {
